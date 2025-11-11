@@ -1,0 +1,29 @@
+workflows:
+  ios-release:
+    name: iOS Release Build
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        APP_NAME: "Task Management"
+        BUNDLE_ID: "com.yourname.taskmgmt"
+        IOS_BUILD_MODE: release
+        EXPORT_METHOD: app-store
+    scripts:
+      - name: Clean and get packages
+        script: |
+          flutter clean
+          flutter pub get
+      - name: Build iOS release
+        script: |
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/*.ipa
+      - build/ios/iphoneos/*.app
+      - build/ios/archive/*.xcarchive
+    publishing:
+      email:
+        recipients:
+          - your_email@example.com
