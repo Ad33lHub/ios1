@@ -1,0 +1,92 @@
+workflows:
+  ios-release:
+    name: iOS Release Build
+    environment:
+      vars:
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        BUNDLE_ID: "com.taskmgmt.app"  # Update with your bundle ID
+        APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
+        APP_STORE_CONNECT_KEY_IDENTIFIER: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
+      flutter: stable
+      xcode: latest
+      macos_version: monterey
+    scripts:
+      - name: Get Flutter dependencies
+        script: |
+          flutter pub get
+
+      - name: Get iOS dependencies
+        script: |
+          cd ios
+          pod install --repo-update
+          cd ..
+
+      - name: Run Flutter analyzer
+        script: flutter analyze
+
+      - name: Run tests
+        script: flutter test --coverage
+
+      - name: Build iOS app for distribution
+        script: |
+          flutter build ios \
+            --release \
+            --build-number=$(($(date +%s) / 60)) \
+            --target-platform=ios
+
+      - name: Create IPA
+        script: |
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -derivedDataPath build/ios_build \
+            -archivePath build/ios_build/Runner.xcarchive \
+            archive
+          
+          xcodebuild \
+            -exportArchive \
+            -archivePath build/ios_build/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/ios_build/ipa
+
+    artifacts:
+      - build/ios_build/ipa/*.ipa
+      - build/coverage/**
+
+    publishing:
+      # Optional: Publish to App Store Connect / TestFlight
+      app_store_connect:
+        auth: integration
+        # Uncomment and configure below when ready to publish to App Store Connect
+        # submit_to_testflight: true
+        # submit_to_app_store: false
+
+      # Email notification on build completion
+      email:
+        recipients:
+          - $BUILD_NOTIFICATION_EMAIL
+        notify:
+          success: true
+          failure: true
+
+  ios-debug:
+    name: iOS Debug Build
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      - name: Get iOS dependencies
+        script: |
+          cd ios
+          pod install
+          cd ..
+      - name: Build iOS app for testing
+        script: flutter build ios --debug
+    artifacts:
+      - build/ios/iphoneos/Runner.app
