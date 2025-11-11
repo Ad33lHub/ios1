@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// Note: withValues(alpha: ...) expects 0.0-1.0, not 0-255
-// This helper is kept for clarity but just returns the opacity as-is
-double normalizeAlpha(double opacity) => opacity.clamp(0.0, 1.0);
-
 class GlassmorphismTheme {
   // Color Palette - Dark with neon accents
   static const Color darkBackground = Color(0xFF0A0E27);
@@ -14,11 +10,11 @@ class GlassmorphismTheme {
   static const Color neonCyan = Color(0xFF00F5FF);
   static const Color accentBlue = Color(0xFF4A90E2);
   static const Color accentPurple = Color(0xFF9B59B6);
-
+  
   // Glass colors
   static const Color glassWhite = Color(0x40FFFFFF);
   static const Color glassDark = Color(0x40000000);
-
+  
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
@@ -30,7 +26,7 @@ class GlassmorphismTheme {
     ],
     stops: [0.0, 0.5, 1.0],
   );
-
+  
   static const LinearGradient accentGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -39,7 +35,7 @@ class GlassmorphismTheme {
       Color(0xFFB026FF),
     ],
   );
-
+  
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -56,7 +52,7 @@ class GlassmorphismTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBackground,
-
+      
       // Color Scheme
       colorScheme: const ColorScheme.dark(
         primary: neonBlue,
@@ -69,7 +65,7 @@ class GlassmorphismTheme {
         onSurface: Colors.white,
         onError: Colors.white,
       ),
-
+      
       // Text Theme
       textTheme: TextTheme(
         displayLarge: GoogleFonts.poppins(
@@ -150,7 +146,7 @@ class GlassmorphismTheme {
           color: Colors.white60,
         ),
       ),
-
+      
       // AppBar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -163,7 +159,7 @@ class GlassmorphismTheme {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-
+      
       // Card Theme
       cardTheme: CardThemeData(
         color: Colors.transparent,
@@ -172,7 +168,7 @@ class GlassmorphismTheme {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-
+      
       // Button Themes
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -184,7 +180,7 @@ class GlassmorphismTheme {
           backgroundColor: Colors.transparent,
         ),
       ),
-
+      
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -195,7 +191,7 @@ class GlassmorphismTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: glassWhite.withValues(alpha: 0.3), width: 1.5),
+          borderSide: BorderSide(color: glassWhite.withOpacity(0.3), width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
@@ -219,7 +215,7 @@ class GlassmorphismTheme {
           fontSize: 14,
         ),
       ),
-
+      
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.transparent,
@@ -228,16 +224,16 @@ class GlassmorphismTheme {
         unselectedItemColor: Colors.white38,
         type: BottomNavigationBarType.fixed,
       ),
-
+      
       // Icon Theme
       iconTheme: const IconThemeData(
         color: Colors.white,
         size: 24,
       ),
-
+      
       // Divider Theme
       dividerTheme: DividerThemeData(
-        color: glassWhite.withValues(alpha: 0.1),
+        color: glassWhite.withOpacity(0.1),
         thickness: 1,
         space: 1,
       ),
@@ -271,3 +267,4 @@ const List<BoxShadow> neonShadow = [
     offset: Offset(0, 0),
   ),
 ];
+

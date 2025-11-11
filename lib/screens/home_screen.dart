@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'today_tasks_screen.dart';
@@ -64,13 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    GlassmorphismTheme.glassWhite.withValues(alpha: 0.1),
-                    GlassmorphismTheme.glassWhite.withValues(alpha: 0.05),
+                    GlassmorphismTheme.glassWhite.withOpacity(0.1),
+                    GlassmorphismTheme.glassWhite.withOpacity(0.05),
                   ],
                 ),
                 border: Border(
                   top: BorderSide(
-                    color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
+                    color: GlassmorphismTheme.glassWhite.withOpacity(0.2),
                     width: 1.5,
                   ),
                 ),
@@ -78,37 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SafeArea(
                 child: Container(
                   height: 60,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildNavItem(
-                        Icons.today_outlined,
-                        Icons.today,
-                        'Today',
-                        0,
-                      ),
-                      _buildNavItem(
-                        Icons.check_circle_outline,
-                        Icons.check_circle,
-                        'Done',
-                        1,
-                      ),
-                      _buildNavItem(
-                        Icons.repeat_outlined,
-                        Icons.repeat,
-                        'Repeat',
-                        2,
-                      ),
-                      _buildNavItem(
-                        Icons.settings_outlined,
-                        Icons.settings,
-                        'Settings',
-                        3,
-                      ),
+                      _buildNavItem(Icons.today_outlined, Icons.today, 'Today', 0),
+                      _buildNavItem(Icons.check_circle_outline, Icons.check_circle, 'Done', 1),
+                      _buildNavItem(Icons.repeat_outlined, Icons.repeat, 'Repeat', 2),
+                      _buildNavItem(Icons.settings_outlined, Icons.settings, 'Settings', 3),
                     ],
                   ),
                 ),
@@ -118,43 +96,35 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         floatingActionButton: _currentIndex == 0
             ? Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  gradient: GlassmorphismTheme.primaryGradient,
-                  boxShadow: [
-                    BoxShadow(
-                      color: GlassmorphismTheme.neonBlue.withValues(alpha: 0.4),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: FloatingActionButton(
-                  onPressed: () async {
-                    final result = await Navigator.pushNamed(
-                      context,
-                      '/add-task',
-                    );
-                    if (result == true && mounted) {
-                      setState(() {});
-                    }
-                  },
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  child: const Icon(Icons.add, color: Colors.white),
-                ),
-              )
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            gradient: GlassmorphismTheme.primaryGradient,
+            boxShadow: [
+              BoxShadow(
+                color: GlassmorphismTheme.neonBlue.withOpacity(0.4),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: FloatingActionButton(
+            onPressed: () async {
+              final result = await Navigator.pushNamed(context, '/add-task');
+              if (result == true && mounted) {
+                setState(() {});
+              }
+            },
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+        )
             : null,
       ),
     );
   }
 
-  Widget _buildNavItem(
-    IconData outlinedIcon,
-    IconData filledIcon,
-    String label,
-    int index,
-  ) {
+  Widget _buildNavItem(IconData outlinedIcon, IconData filledIcon, String label, int index) {
     final isSelected = _currentIndex == index;
     return Expanded(
       child: InkWell(
@@ -168,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
               isSelected ? filledIcon : outlinedIcon,
               color: isSelected
                   ? GlassmorphismTheme.neonBlue
-                  : GlassmorphismTheme.glassWhite.withValues(alpha: 0.6),
+                  : GlassmorphismTheme.glassWhite.withOpacity(0.6),
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -178,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 11,
                 color: isSelected
                     ? GlassmorphismTheme.neonBlue
-                    : GlassmorphismTheme.glassWhite.withValues(alpha: 0.6),
+                    : GlassmorphismTheme.glassWhite.withOpacity(0.6),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
               maxLines: 1,

@@ -3,6 +3,7 @@ import '../database/database_helper.dart';
 import '../models/task.dart';
 import '../widgets/task_card.dart';
 import '../services/repeat_task_service.dart';
+import '../widgets/glass_widgets.dart';
 import '../theme/glassmorphism_theme.dart';
 import 'add_task_screen.dart';
 
@@ -60,7 +61,9 @@ class _TodayTasksScreenState extends State<TodayTasksScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.black87,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         title: Text(
           'Delete Task',
           style: Theme.of(context).textTheme.titleLarge,
@@ -72,14 +75,20 @@ class _TodayTasksScreenState extends State<TodayTasksScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: Colors.white70)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               backgroundColor: const Color(0xFFFF6B6B),
             ),
-            child: Text('Delete', style: TextStyle(color: Colors.white)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -106,15 +115,12 @@ class _TodayTasksScreenState extends State<TodayTasksScreen> {
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
                   colors: [
-                    GlassmorphismTheme.neonBlue.withValues(alpha: 0.3),
-                    GlassmorphismTheme.neonPurple.withValues(alpha: 0.3),
+                    GlassmorphismTheme.neonBlue.withOpacity(0.3),
+                    GlassmorphismTheme.neonPurple.withOpacity(0.3),
                   ],
                 ),
               ),
-              child: const Icon(
-                Icons.today,
-                color: GlassmorphismTheme.neonBlue,
-              ),
+              child: const Icon(Icons.today, color: GlassmorphismTheme.neonBlue),
             ),
             const SizedBox(width: 12),
             Text(
@@ -133,78 +139,78 @@ class _TodayTasksScreenState extends State<TodayTasksScreen> {
       ),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  GlassmorphismTheme.neonBlue,
-                ),
-              ),
-            )
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(
+            GlassmorphismTheme.neonBlue,
+          ),
+        ),
+      )
           : _tasks.isEmpty
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          GlassmorphismTheme.neonBlue.withValues(alpha: 0.2),
-                          GlassmorphismTheme.neonPurple.withValues(alpha: 0.2),
-                        ],
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.task_alt,
-                      size: 64,
-                      color: Colors.white.withValues(alpha: 0.38),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'No tasks for today',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Tap the + button to add a new task',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.38),
-                    ),
-                  ),
-                ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    GlassmorphismTheme.neonBlue.withOpacity(0.2),
+                    GlassmorphismTheme.neonPurple.withOpacity(0.2),
+                  ],
+                ),
               ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadTasks,
-              color: GlassmorphismTheme.neonBlue,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: _tasks.length,
-                itemBuilder: (context, index) {
-                  final task = _tasks[index];
-                  return TaskCard(
-                    task: task,
-                    onTap: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddTaskScreen(task: task),
-                        ),
-                      );
-                      if (result == true) {
-                        _loadTasks();
-                      }
-                    },
-                    onToggleComplete: () => _toggleTaskComplete(task),
-                    onDelete: () => _deleteTask(task),
-                  );
-                },
+              child: Icon(
+                Icons.task_alt,
+                size: 64,
+                color: Colors.white.withOpacity(0.38),
               ),
             ),
+            const SizedBox(height: 24),
+            Text(
+              'No tasks for today',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.white.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap the + button to add a new task',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withOpacity(0.38),
+              ),
+            ),
+          ],
+        ),
+      )
+          : RefreshIndicator(
+        onRefresh: _loadTasks,
+        color: GlassmorphismTheme.neonBlue,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: _tasks.length,
+          itemBuilder: (context, index) {
+            final task = _tasks[index];
+            return TaskCard(
+              task: task,
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddTaskScreen(task: task),
+                  ),
+                );
+                if (result == true) {
+                  _loadTasks();
+                }
+              },
+              onToggleComplete: () => _toggleTaskComplete(task),
+              onDelete: () => _deleteTask(task),
+            );
+          },
+        ),
+      ),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
-import 'dart:developer' as developer;
 import '../models/task.dart';
 
 class NotificationService {
@@ -20,10 +19,7 @@ class NotificationService {
     final location = tz.local;
     tz.setLocalLocation(location);
 
-    developer.log(
-      '🌍 Timezone initialized: $location',
-      name: 'notification_service',
-    );
+    print('🌍 Timezone initialized: $location');
 
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
@@ -46,10 +42,7 @@ class NotificationService {
 
     await _requestPermissions();
     _isInitialized = true;
-    developer.log(
-      '✅ NotificationService initialized',
-      name: 'notification_service',
-    );
+    print('✅ NotificationService initialized');
   }
 
   Future<void> _requestPermissions() async {
@@ -61,48 +54,30 @@ class NotificationService {
     if (androidPlugin != null) {
       // Request notification permission
       final notifEnabled = await androidPlugin.areNotificationsEnabled();
-      developer.log(
-        '📬 Notifications enabled: $notifEnabled',
-        name: 'notification_service',
-      );
+      print('📬 Notifications enabled: $notifEnabled');
 
       if (notifEnabled == false) {
         final granted = await androidPlugin.requestNotificationsPermission();
-        developer.log(
-          '📬 Notification permission granted: $granted',
-          name: 'notification_service',
-        );
+        print('📬 Notification permission granted: $granted');
       }
 
       // Request exact alarm permission for Android 12+
       try {
         final canSchedule = await androidPlugin.canScheduleExactNotifications();
-        developer.log(
-          '⏰ Can schedule exact alarms: $canSchedule',
-          name: 'notification_service',
-        );
+        print('⏰ Can schedule exact alarms: $canSchedule');
 
         if (canSchedule == false) {
           final granted = await androidPlugin.requestExactAlarmsPermission();
-          developer.log(
-            '⏰ Exact alarm permission granted: $granted',
-            name: 'notification_service',
-          );
+          print('⏰ Exact alarm permission granted: $granted');
         }
       } catch (e) {
-        developer.log(
-          '⚠️ Exact alarm permission check failed: $e',
-          name: 'notification_service',
-        );
+        print('⚠️ Exact alarm permission check failed: $e');
       }
     }
   }
 
   void _onNotificationTapped(NotificationResponse response) {
-    developer.log(
-      '🔔 Notification tapped: ${response.id}',
-      name: 'notification_service',
-    );
+    print('🔔 Notification tapped: ${response.id}');
   }
 
   // Create notification details with MAXIMUM visibility
@@ -173,10 +148,7 @@ class NotificationService {
   Future<void> testImmediateNotification() async {
     await _ensureInitialized();
 
-    developer.log(
-      '🔔 Testing immediate notification...',
-      name: 'notification_service',
-    );
+    print('🔔 Testing immediate notification...');
 
     final androidDetails = _createAndroidDetails(
       channelId: 'test_channel',
@@ -207,29 +179,20 @@ class NotificationService {
       notificationDetails,
     );
 
-    developer.log(
-      '✅ Immediate notification sent with ID: 999',
-      name: 'notification_service',
-    );
+    print('✅ Immediate notification sent with ID: 999');
   }
 
   // TEST FUNCTION - Test scheduled notification (30 seconds)
   Future<void> test30SecondNotification() async {
     await _ensureInitialized();
 
-    developer.log(
-      '⏰ Scheduling notification for 30 seconds from now...',
-      name: 'notification_service',
-    );
+    print('⏰ Scheduling notification for 30 seconds from now...');
 
     final now = tz.TZDateTime.now(tz.local);
     final scheduledDate = now.add(const Duration(seconds: 30));
 
-    developer.log('📅 Current time: $now', name: 'notification_service');
-    developer.log(
-      '📅 Scheduled time: $scheduledDate',
-      name: 'notification_service',
-    );
+    print('📅 Current time: $now');
+    print('📅 Scheduled time: $scheduledDate');
 
     final androidDetails = _createAndroidDetails(
       channelId: 'test_scheduled_channel',
@@ -264,33 +227,21 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    developer.log(
-      '✅ 30-second notification scheduled with ID: 888',
-      name: 'notification_service',
-    );
+    print('✅ 30-second notification scheduled with ID: 888');
     await listPendingNotifications();
   }
 
   // DEBUG FUNCTION - List all pending notifications
   Future<void> listPendingNotifications() async {
     final pending = await _notifications.pendingNotificationRequests();
-    developer.log(
-      '📋 Pending notifications: ${pending.length}',
-      name: 'notification_service',
-    );
+    print('📋 Pending notifications: ${pending.length}');
 
     for (final notification in pending) {
-      developer.log(
-        '  ID: ${notification.id} | Title: ${notification.title}',
-        name: 'notification_service',
-      );
+      print('  ID: ${notification.id} | Title: ${notification.title}');
     }
 
     if (pending.isEmpty) {
-      developer.log(
-        '⚠️ WARNING: No pending notifications found!',
-        name: 'notification_service',
-      );
+      print('⚠️ WARNING: No pending notifications found!');
     }
   }
 
@@ -301,26 +252,17 @@ class NotificationService {
   ) async {
     final now = DateTime.now();
     if (dueDateTime.isBefore(now)) {
-      developer.log(
-        '⚠️ Due time is in the past, skipping 1-min reminder',
-        name: 'notification_service',
-      );
+      print('⚠️ Due time is in the past, skipping 1-min reminder');
       return;
     }
 
     final reminderTime = dueDateTime.subtract(const Duration(minutes: 1));
     if (reminderTime.isBefore(now)) {
-      developer.log(
-        '⚠️ 1-min reminder time is in the past, skipping',
-        name: 'notification_service',
-      );
+      print('⚠️ 1-min reminder time is in the past, skipping');
       return;
     }
 
-    developer.log(
-      '⏰ Scheduling 1-min reminder for: $reminderTime',
-      name: 'notification_service',
-    );
+    print('⏰ Scheduling 1-min reminder for: $reminderTime');
 
     final androidDetails = _createAndroidDetails(
       channelId: 'task_urgent_reminder_channel',
@@ -355,10 +297,7 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    developer.log(
-      '✅ 1-min reminder scheduled with ID: ${notificationId + 2000}',
-      name: 'notification_service',
-    );
+    print('✅ 1-min reminder scheduled with ID: ${notificationId + 2000}');
   }
 
   Future<void> _scheduleFiveMinuteReminder(
@@ -368,23 +307,17 @@ class NotificationService {
   ) async {
     final now = DateTime.now();
     if (dueDateTime.isBefore(now)) {
-      developer.log('⚠️ Due time is in the past, skipping 5-min reminder');
+      print('⚠️ Due time is in the past, skipping 5-min reminder');
       return;
     }
 
     final reminderTime = dueDateTime.subtract(const Duration(minutes: 5));
     if (reminderTime.isBefore(now)) {
-      developer.log(
-        '⚠️ 5-min reminder time is in the past, skipping',
-        name: 'notification_service',
-      );
+      print('⚠️ 5-min reminder time is in the past, skipping');
       return;
     }
 
-    developer.log(
-      '⏰ Scheduling 5-min reminder for: $reminderTime',
-      name: 'notification_service',
-    );
+    print('⏰ Scheduling 5-min reminder for: $reminderTime');
 
     final androidDetails = _createAndroidDetails(
       channelId: 'task_reminder_channel',
@@ -418,26 +351,17 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    developer.log(
-      '✅ 5-min reminder scheduled with ID: ${notificationId + 1000}',
-      name: 'notification_service',
-    );
+    print('✅ 5-min reminder scheduled with ID: ${notificationId + 1000}');
   }
 
   Future<void> scheduleTaskNotification(Task task) async {
     await _ensureInitialized();
 
     try {
-      developer.log(
-        '📱 === Scheduling notification for task: ${task.title} ===',
-        name: 'notification_service',
-      );
+      print('📱 === Scheduling notification for task: ${task.title} ===');
 
       if (task.dueDate.isBefore(DateTime.now()) && task.repeatType == 'none') {
-        developer.log(
-          '⚠️ Task due date is in the past and not repeating, skipping',
-          name: 'notification_service',
-        );
+        print('⚠️ Task due date is in the past and not repeating, skipping');
         return;
       }
 
@@ -452,18 +376,9 @@ class NotificationService {
             0,
           );
 
-      developer.log(
-        '📅 Due date/time: $dueDateTime',
-        name: 'notification_service',
-      );
-      developer.log(
-        '🆔 Notification ID: $notificationId',
-        name: 'notification_service',
-      );
-      developer.log(
-        '🔁 Repeat type: ${task.repeatType}',
-        name: 'notification_service',
-      );
+      print('📅 Due date/time: $dueDateTime');
+      print('🆔 Notification ID: $notificationId');
+      print('🔁 Repeat type: ${task.repeatType}');
 
       // Schedule reminder notifications
       await _scheduleFiveMinuteReminder(task, dueDateTime, notificationId);
@@ -494,15 +409,9 @@ class NotificationService {
       final now = tz.TZDateTime.now(tz.local);
       final scheduledDate = tz.TZDateTime.from(dueDateTime, tz.local);
 
-      developer.log('📅 Current TZ time: $now', name: 'notification_service');
-      developer.log(
-        '📅 Scheduled TZ time: $scheduledDate',
-        name: 'notification_service',
-      );
-      developer.log(
-        '📅 Is scheduled time in future? ${scheduledDate.isAfter(now)}',
-        name: 'notification_service',
-      );
+      print('📅 Current TZ time: $now');
+      print('📅 Scheduled TZ time: $scheduledDate');
+      print('📅 Is scheduled time in future? ${scheduledDate.isAfter(now)}');
 
       if (task.repeatType == 'daily') {
         var nextDate = scheduledDate;
@@ -517,10 +426,7 @@ class NotificationService {
           ).add(const Duration(days: 1));
         }
 
-        developer.log(
-          '📅 Daily task - next occurrence: $nextDate',
-          name: 'notification_service',
-        );
+        print('📅 Daily task - next occurrence: $nextDate');
 
         await _notifications.zonedSchedule(
           notificationId,
@@ -533,15 +439,9 @@ class NotificationService {
               UILocalNotificationDateInterpretation.absoluteTime,
         );
 
-        developer.log(
-          '✅ Daily notification scheduled with ID: $notificationId',
-          name: 'notification_service',
-        );
+        print('✅ Daily notification scheduled with ID: $notificationId');
       } else if (task.repeatType == 'weekly' && task.repeatDays != null) {
-        developer.log(
-          '📅 Weekly task - scheduling for days: ${task.repeatDays}',
-          name: 'notification_service',
-        );
+        print('📅 Weekly task - scheduling for days: ${task.repeatDays}');
         final days = _parseRepeatDays(task.repeatDays!);
 
         for (final day in days) {
@@ -567,31 +467,18 @@ class NotificationService {
                 UILocalNotificationDateInterpretation.absoluteTime,
           );
 
-          developer.log(
-            '✅ One-time notification scheduled with ID: $notificationId',
-            name: 'notification_service',
-          );
+          print('✅ One-time notification scheduled with ID: $notificationId');
         } else {
-          developer.log(
-            '⚠️ Scheduled time is in the past, skipping main notification',
-            name: 'notification_service',
-          );
+          print('⚠️ Scheduled time is in the past, skipping main notification');
         }
       }
 
       // List all pending notifications after scheduling
       await listPendingNotifications();
 
-      developer.log(
-        '📱 === Notification scheduling complete ===',
-        name: 'notification_service',
-      );
+      print('📱 === Notification scheduling complete ===');
     } catch (e) {
-      developer.log(
-        '❌ ERROR scheduling notification',
-        name: 'notification_service',
-        error: e,
-      );
+      print('❌ ERROR scheduling notification: $e');
       rethrow;
     }
   }
@@ -606,10 +493,7 @@ class NotificationService {
     final now = tz.TZDateTime.now(tz.local);
     final scheduledDate = _getNextWeekday(now, dayOfWeek, dueDateTime);
 
-    developer.log(
-      '📅 Weekly notification for day $dayOfWeek: $scheduledDate',
-      name: 'notification_service',
-    );
+    print('📅 Weekly notification for day $dayOfWeek: $scheduledDate');
 
     if (scheduledDate.isAfter(now)) {
       await _notifications.zonedSchedule(
@@ -624,10 +508,7 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       );
 
-      developer.log(
-        '✅ Weekly notification scheduled with ID: $id',
-        name: 'notification_service',
-      );
+      print('✅ Weekly notification scheduled with ID: $id');
     }
   }
 
@@ -662,30 +543,20 @@ class NotificationService {
       final cleaned = repeatDays.replaceAll('[', '').replaceAll(']', '');
       return cleaned.split(',').map((e) => int.parse(e.trim())).toList();
     } catch (e) {
-      developer.log(
-        '❌ Error parsing repeat days',
-        name: 'notification_service',
-        error: e,
-      );
+      print('❌ Error parsing repeat days: $e');
       return [];
     }
   }
 
   Future<void> cancelNotification(int notificationId) async {
-    developer.log(
-      '🗑️ Cancelling notification ID: $notificationId',
-      name: 'notification_service',
-    );
+    print('🗑️ Cancelling notification ID: $notificationId');
     await _notifications.cancel(notificationId);
     await _notifications.cancel(notificationId + 1000); // 5-min reminder
     await _notifications.cancel(notificationId + 2000); // 1-min reminder
   }
 
   Future<void> cancelAllNotifications() async {
-    developer.log(
-      '🗑️ Cancelling all notifications',
-      name: 'notification_service',
-    );
+    print('🗑️ Cancelling all notifications');
     await _notifications.cancelAll();
   }
 
