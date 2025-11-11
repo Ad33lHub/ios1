@@ -8,6 +8,9 @@ import '../services/notification_service.dart';
 import '../widgets/glass_widgets.dart';
 import '../theme/glassmorphism_theme.dart';
 
+// Helper to convert opacity (0.0-1.0) to alpha value (0-255)
+int opacityToAlpha(double opacity) => (opacity * 255).round();
+
 class AddTaskScreen extends StatefulWidget {
   final Task? task;
 
@@ -169,7 +172,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   onPressed: () => Navigator.pop(context),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   gradient: LinearGradient(
-                    colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)],
+                    colors: [Colors.white.withValues(alpha:0.1), Colors.white.withValues(alpha: 0.5)],
                   ),
                   child: Text(
                     'Cancel',
@@ -445,7 +448,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: GlassmorphismTheme.glassWhite.withOpacity(0.2),
+                          color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -469,7 +472,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: GlassmorphismTheme.glassWhite.withOpacity(0.2),
+                          color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -536,15 +539,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               gradient: isSelected
                                   ? LinearGradient(
                                       colors: [
-                                        GlassmorphismTheme.neonBlue.withOpacity(0.3),
-                                        GlassmorphismTheme.neonPurple.withOpacity(0.3),
+                                        GlassmorphismTheme.neonBlue.withValues(alpha: 0.3),
+                                        GlassmorphismTheme.neonPurple.withValues(alpha: 0.3),
                                       ],
                                     )
                                   : null,
                               border: Border.all(
                                 color: isSelected
                                     ? GlassmorphismTheme.neonBlue
-                                    : GlassmorphismTheme.glassWhite.withOpacity(0.2),
+                                    : GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Text(
@@ -704,15 +707,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           gradient: isSelected
               ? LinearGradient(
                   colors: [
-                    GlassmorphismTheme.neonBlue.withOpacity(0.3),
-                    GlassmorphismTheme.neonPurple.withOpacity(0.3),
+                    GlassmorphismTheme.neonBlue.withValues(alpha: 0.3),
+                    GlassmorphismTheme.neonPurple.withValues(alpha: 0.3),
                   ],
                 )
               : null,
           border: Border.all(
             color: isSelected
                 ? GlassmorphismTheme.neonBlue
-                : GlassmorphismTheme.glassWhite.withOpacity(0.2),
+                : GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
           ),
         ),
         child: Text(

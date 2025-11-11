@@ -5,6 +5,9 @@ import '../database/database_helper.dart';
 import '../widgets/glass_widgets.dart';
 import '../theme/glassmorphism_theme.dart';
 
+// Helper to convert opacity (0.0-1.0) to alpha value (0-255)
+int opacityToAlpha(double opacity) => (opacity * 255).round();
+
 class TaskCard extends StatefulWidget {
   final Task task;
   final VoidCallback onTap;
@@ -88,7 +91,7 @@ class _TaskCardState extends State<TaskCard> {
                     boxShadow: widget.task.isCompleted
                         ? [
                             BoxShadow(
-                              color: GlassmorphismTheme.neonBlue.withOpacity(0.4),
+                              color: GlassmorphismTheme.neonBlue.withValues(alpha: 0.4),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -143,7 +146,7 @@ class _TaskCardState extends State<TaskCard> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                color: GlassmorphismTheme.darkSurface.withOpacity(0.95),
+                color: GlassmorphismTheme.darkSurface.withValues(alpha: 0.95),
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     child: Row(
@@ -242,7 +245,7 @@ class _TaskCardState extends State<TaskCard> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: GlassmorphismTheme.neonBlue.withOpacity(0.5),
+                            color: GlassmorphismTheme.neonBlue.withValues(alpha:0.5),
                             blurRadius: 4,
                             spreadRadius: 1,
                           ),
@@ -262,12 +265,12 @@ class _TaskCardState extends State<TaskCard> {
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
                   colors: [
-                    GlassmorphismTheme.neonCyan.withOpacity(0.2),
-                    GlassmorphismTheme.neonPurple.withOpacity(0.2),
+                    GlassmorphismTheme.neonCyan.withValues(alpha: 0.2),
+                    GlassmorphismTheme.neonPurple.withValues(alpha: 0.2),
                   ],
                 ),
                 border: Border.all(
-                  color: GlassmorphismTheme.neonCyan.withOpacity(0.3),
+                  color: GlassmorphismTheme.neonCyan.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -286,9 +289,9 @@ class _TaskCardState extends State<TaskCard> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: const Color(0xFFFF6B6B).withOpacity(0.2),
+                color: const Color(0xFFFF6B6B).withValues(alpha: 0.2),
                 border: Border.all(
-                  color: const Color(0xFFFF6B6B).withOpacity(0.5),
+                  color: const Color(0xFFFF6B6B).withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),

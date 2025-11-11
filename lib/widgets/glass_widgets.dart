@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../theme/glassmorphism_theme.dart';
 
+// Helper to keep opacity value as double (withValues expects 0.0-1.0 for alpha)
+double keepOpacity(double opacity) => opacity;
+
 /// Glass Card Widget with blur effect
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -37,7 +40,7 @@ class GlassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(glassRadius),
         border: border ??
             Border.all(
-              color: GlassmorphismTheme.glassWhite.withOpacity(0.2),
+              color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
               width: 1.5,
             ),
         boxShadow: boxShadow ?? glassShadow,
@@ -53,8 +56,8 @@ class GlassCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  GlassmorphismTheme.glassWhite.withOpacity(glassOpacity),
-                  GlassmorphismTheme.glassWhite.withOpacity(glassOpacity * 0.5),
+                  GlassmorphismTheme.glassWhite.withValues(alpha: glassOpacity),
+                  GlassmorphismTheme.glassWhite.withValues(alpha: glassOpacity * 0.5),
                 ],
               ),
               borderRadius: BorderRadius.circular(glassRadius),
@@ -161,14 +164,14 @@ class _GlassButtonState extends State<GlassButton>
             boxShadow: widget.boxShadow ?? [
               ...glassShadow,
               BoxShadow(
-                color: GlassmorphismTheme.neonBlue.withOpacity(0.3),
+                color: GlassmorphismTheme.neonBlue.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 2,
                 offset: const Offset(0, 0),
               ),
             ],
             border: Border.all(
-              color: GlassmorphismTheme.glassWhite.withOpacity(0.3),
+              color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
@@ -225,7 +228,7 @@ class GlassContainer extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(glassRadius),
         border: border ??
             Border.all(
-              color: GlassmorphismTheme.glassWhite.withOpacity(0.2),
+              color: GlassmorphismTheme.glassWhite.withValues(alpha: 0.2),
               width: 1.5,
             ),
       ),
@@ -237,7 +240,7 @@ class GlassContainer extends StatelessWidget {
             padding: padding,
             decoration: BoxDecoration(
               color: (color ?? GlassmorphismTheme.glassWhite)
-                  .withOpacity(opacity),
+                  .withValues(alpha: opacity),
               borderRadius: borderRadius ?? BorderRadius.circular(glassRadius),
             ),
             child: child,
@@ -313,7 +316,7 @@ class NeonText extends StatelessWidget {
             blurRadius: glowRadius,
           ),
           Shadow(
-            color: glowColor.withOpacity(0.5),
+            color: glowColor.withValues(alpha: 0.5),
             blurRadius: glowRadius * 2,
           ),
         ],
