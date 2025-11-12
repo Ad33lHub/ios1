@@ -354,133 +354,127 @@ class NotificationService {
     print('✅ 5-min reminder scheduled with ID: ${notificationId + 1000}');
   }
 
-  Future<void> scheduleTaskNotification(Task task) async {
+  // FIXED: Changed return type from Future<void> to Future<int>
+  Future<int> scheduleTaskNotification(Task task) async {
     await _ensureInitialized();
 
+    print('📝 Scheduling notification for task: ${task.title}');
+
+    // Generate notification ID
+    int notificationId =
+        task.id ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    print('🔑 Using notification ID: $notificationId');
+
+    // Check if task has a due time
+    if (task.dueTime == null) {
+      print('⚠️ Task has no due time, skipping notification');
+      return notificationId;
+    }
+
+    final dueDateTime = task.dueTime!;
+    final now = DateTime.now();
+
+    // Check if due time is in the past
+    if (dueDateTime.isBefore(now)) {
+      print('⚠️ Due time is in the past, skipping notification');
+      return notificationId;
+    }
+
+    print('📅 Due time: $dueDateTime');
+
+    // Create notification details
+    final androidDetails = _createAndroidDetails(
+      channelId: 'task_channel',
+      channelName: 'Task Notifications',
+      channelDescription: 'Notifications for task reminders',
+      importance: Importance.max,
+      priority: Priority.high,
+      ledColor: Colors.blue,
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    );
+
+    final notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
     try {
-      print('📱 === Scheduling notification for task: ${task.title} ===');
-
-      if (task.dueDate.isBefore(DateTime.now()) && task.repeatType == 'none') {
-        print('⚠️ Task due date is in the past and not repeating, skipping');
-        return;
-      }
-
-      final notificationId = task.notificationId ?? (task.id ?? 0);
-      final dueDateTime =
-          task.dueTime ??
-          DateTime(
-            task.dueDate.year,
-            task.dueDate.month,
-            task.dueDate.day,
-            9,
-            0,
-          );
-
-      print('📅 Due date/time: $dueDateTime');
-      print('🆔 Notification ID: $notificationId');
-      print('🔁 Repeat type: ${task.repeatType}');
-
-      // Schedule reminder notifications
-      await _scheduleFiveMinuteReminder(task, dueDateTime, notificationId);
-      await _scheduleOneMinuteReminder(task, dueDateTime, notificationId);
-
-      // Main notification with maximum visibility
-      final androidDetails = _createAndroidDetails(
-        channelId: 'task_channel',
-        channelName: 'Task Notifications',
-        channelDescription: 'Notifications for upcoming tasks',
-        importance: Importance.max,
-        priority: Priority.max,
-        ledColor: Colors.green,
-      );
-
-      const iosDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        interruptionLevel: InterruptionLevel.timeSensitive,
-      );
-
-      final notificationDetails = NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      );
-
-      final now = tz.TZDateTime.now(tz.local);
-      final scheduledDate = tz.TZDateTime.from(dueDateTime, tz.local);
-
-      print('📅 Current TZ time: $now');
-      print('📅 Scheduled TZ time: $scheduledDate');
-      print('📅 Is scheduled time in future? ${scheduledDate.isAfter(now)}');
-
-      if (task.repeatType == 'daily') {
-        var nextDate = scheduledDate;
-        if (!nextDate.isAfter(now)) {
-          nextDate = tz.TZDateTime(
-            tz.local,
-            now.year,
-            now.month,
-            now.day,
-            scheduledDate.hour,
-            scheduledDate.minute,
-          ).add(const Duration(days: 1));
-        }
-
-        print('📅 Daily task - next occurrence: $nextDate');
+      // Handle different repeat types
+      if (task.repeatType == 'none') {
+        // SINGLE NOTIFICATION
+        print('📌 Scheduling single notification');
 
         await _notifications.zonedSchedule(
           notificationId,
-          '📅 ${task.title}',
+          '📋 ${task.title}',
           task.description.isEmpty ? 'Task is due now!' : task.description,
-          nextDate,
+          tz.TZDateTime.from(dueDateTime, tz.local),
           notificationDetails,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
         );
 
+        print('✅ Single notification scheduled with ID: $notificationId');
+
+        // Schedule 5-minute reminder
+        await _scheduleFiveMinuteReminder(task, dueDateTime, notificationId);
+
+        // Schedule 1-minute reminder
+        await _scheduleOneMinuteReminder(task, dueDateTime, notificationId);
+      } else if (task.repeatType == 'daily') {
+        // DAILY NOTIFICATION
+        print('📌 Scheduling daily notification');
+
+        await _notifications.zonedSchedule(
+          notificationId,
+          '📋 ${task.title}',
+          task.description.isEmpty ? 'Task is due now!' : task.description,
+          tz.TZDateTime.from(dueDateTime, tz.local),
+          notificationDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          matchDateTimeComponents: DateTimeComponents.time,
+        );
+
         print('✅ Daily notification scheduled with ID: $notificationId');
       } else if (task.repeatType == 'weekly' && task.repeatDays != null) {
-        print('📅 Weekly task - scheduling for days: ${task.repeatDays}');
-        final days = _parseRepeatDays(task.repeatDays!);
+        // WEEKLY NOTIFICATION
+        print('📌 Scheduling weekly notifications');
 
-        for (final day in days) {
+        final selectedDays = _parseRepeatDays(task.repeatDays!);
+        print('📅 Selected days: $selectedDays');
+
+        for (int i = 0; i < selectedDays.length; i++) {
+          final dayOfWeek = selectedDays[i];
+          final weeklyNotificationId = notificationId + (i + 1) * 100;
+
           await _scheduleWeeklyNotification(
-            notificationId + day,
+            weeklyNotificationId,
             task,
-            day,
+            dayOfWeek,
             dueDateTime,
             notificationDetails,
           );
         }
-      } else {
-        // One-time notification
-        if (scheduledDate.isAfter(now)) {
-          await _notifications.zonedSchedule(
-            notificationId,
-            '📅 ${task.title}',
-            task.description.isEmpty ? 'Task is due now!' : task.description,
-            scheduledDate,
-            notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-          );
-
-          print('✅ One-time notification scheduled with ID: $notificationId');
-        } else {
-          print('⚠️ Scheduled time is in the past, skipping main notification');
-        }
       }
 
-      // List all pending notifications after scheduling
       await listPendingNotifications();
-
-      print('📱 === Notification scheduling complete ===');
-    } catch (e) {
-      print('❌ ERROR scheduling notification: $e');
+    } catch (e, stackTrace) {
+      print('❌ Error scheduling notification: $e');
+      print('Stack trace: $stackTrace');
       rethrow;
     }
+
+    // Return the notification ID
+    return notificationId;
   }
 
   Future<void> _scheduleWeeklyNotification(
@@ -553,6 +547,11 @@ class NotificationService {
     await _notifications.cancel(notificationId);
     await _notifications.cancel(notificationId + 1000); // 5-min reminder
     await _notifications.cancel(notificationId + 2000); // 1-min reminder
+
+    // Cancel weekly notifications (up to 7 days)
+    for (int i = 1; i <= 7; i++) {
+      await _notifications.cancel(notificationId + (i * 100));
+    }
   }
 
   Future<void> cancelAllNotifications() async {
