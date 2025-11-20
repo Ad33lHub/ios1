@@ -5,6 +5,10 @@
 [![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
+## 📱 Install IPA
+
+Download and install the iOS IPA file directly: [task_mgmt1.ipa](https://drive.google.com/file/d/1HZwnC0bZvo5s9ZZ_b_j_7Z0rVwwYEbDW/view?usp=sharing)
+
 A beautiful, modern Flutter task management application featuring glassmorphism design, local notifications, SQLite database, and comprehensive task organization capabilities. Built with Material Design 3 and optimized for both Android and iOS platforms.
 
 ## ✨ Features
